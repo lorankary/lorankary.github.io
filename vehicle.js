@@ -4,7 +4,7 @@ function Vehicle(i) {
     this.mesh = BABYLON.MeshBuilder.CreateCylinder("vehicle"+i, { height: 1, diameterTop: 0, diameterBottom: 0.5 }, scene);
     this.mesh.material = Vehicle.materials[i%6];
 
-    this.mesh.rotation.x = -Math.PI / 2;
+    this.mesh.rotation.x = Math.PI / 2;
     this.mesh.bakeCurrentTransformIntoVertices();
 
     // create a location that is randomly within the bounds of a world
