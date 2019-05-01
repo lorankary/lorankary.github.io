@@ -18,6 +18,7 @@ function Vehicle(i) {
     this.vel = new BABYLON.Vector3((Math.random()*.2)-.1,
             (Math.random()*.2)-.1, (Math.random()*.2)-.1);
     this.limit(this.vel,Vehicle.maxSpeed);
+    this.target = this.vel.normalizeToNew().scaleInPlace(20).addInPlace(this.mesh.position);
     this.acc = new BABYLON.Vector3(0,0,0);
     }
 
@@ -25,7 +26,7 @@ function Vehicle(i) {
 Vehicle.align_coh_dist_sq = 4*4;    // range for cohesion and alignment
 Vehicle.sep_dist_sq = 1*1;          // range for separation
 Vehicle.sep_factor = 6;             // force multipliers
-Vehicle.coh_factor = 0.1;
+Vehicle.coh_factor = 0.05;
 Vehicle.align_factor = 0.1;
 Vehicle.maxSpeed = 0.1;             // limits for speed and acceleration
 Vehicle.maxAcc = 0.01;
@@ -55,11 +56,17 @@ Vehicle.prototype.update = function() {
     this.acc.set(0,0,0);
     this.limit(this.vel,Vehicle.maxSpeed);
     this.mesh.position.addInPlace(this.vel);
-    // for rotation, have this vehicle look at a point projected
-    // ahead of its location based on its velocity.
-    var target = this.vel.normalizeToNew().scaleInPlace(2).addInPlace(this.mesh.position);
+    // For rotation, have this vehicle look at a point projected
+    // ahead of its location based on its velocity times 20.
+    // We don't want the vehicles to immediately rotate towards
+    // the projection of their velocities because that results in
+    // jittery wriggling motion.  Instead, have each vehicle rotate
+    // towards a point somewhere in between its last target for
+    // rotation and its projection of velocity.
+    let projection = this.vel.normalizeToNew().scaleInPlace(20).addInPlace(this.mesh.position);
+    let target = projection.subtract(this.target).scaleInPlace(.1).addInPlace(this.target);
     this.mesh.lookAt(target);
-
+    this.target = target;
 }
 
 Vehicle.prototype.applyForce = function(v) {

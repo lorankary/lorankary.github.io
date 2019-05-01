@@ -4,6 +4,7 @@ window.onload = setup;
 var canvas; // the canvas element
 var engine; // the BABYLON 3D engine
 var scene;
+var textures = [];
 var camera;
 var vehicles = [];
 var numVehicles = 100;
@@ -39,13 +40,14 @@ function setup() {
 
     init();
     }
-
+// Create the flocking vehicles and start the animation
 function init() {
     Vehicle.createMaterials(scene);
+    // Create all the vehicles
     for(let i = 0; i < numVehicles; i++)
         vehicles.push(new Vehicle(i));
+    // measure performance
     frameCount = 0;
-    // for logging the frames per second
     setInterval (function() {
         //console.log(frameCount /3 + " FPS");
         frameCount = 0;
